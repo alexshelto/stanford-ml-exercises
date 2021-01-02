@@ -18,17 +18,20 @@ for iter = 1:num_iters
     %
 
 
-    hypothesis_values = X * theta;
-    error = hypothesis_values - y; % the error
+   % hypothesis_values = X * theta;
+   % error = hypothesis_values - y; % the error
     % theta0 = theta0 - 1/alpha * summation(error)*ith x
     % theta1 = theta1 - 1/alpha * summation(error)*ith x
     % Using 1 index matrices so 0 index => 1 index, 1 index => 2 index ...
-    temp_theta1 = theta(1) - ( (alpha / m) * sum(error .*X(:,1)));
-    temp_theta2 = theta(2) - ( (alpha / m) * sum(error .*X(:,2)));
+   % temp_theta1 = theta(1) - ( (alpha / m) * sum(error .*X(:,1)));
+   % temp_theta2 = theta(2) - ( (alpha / m) * sum(error .*X(:,2)));
 
     % Assigning all values of theta at the same time
-    theta = [temp_theta1; temp_theta2];
-
+   % theta = [temp_theta1; temp_theta2];
+    error = (X*theta) - y;
+    theta_change = (alpha/m) * (X'*error);
+    theta = theta - theta_change;
+    computeCost(X,y,theta)
     % ============================================================
 
     % Save the cost J in every iteration    
