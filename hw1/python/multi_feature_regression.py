@@ -23,7 +23,7 @@ def computeCost(X,y,theta):
     # cost = J = 1/2m * summation(guess - correct)^2
     m = np.size(y) # number of training examples
     # h = X_norm.dot(theta) # vector of guesses: (m,1) vec
-    return ( (1/2/m) * np.sum((X_norm.dot(theta) - y)**2) )
+    return ( (1/2/m) * np.sum((X.dot(theta) - y)**2) )
 
 def gradientDescent(X,y,theta,alpha,iters):
     '''reduces cost function by altering theta'''
@@ -32,12 +32,12 @@ def gradientDescent(X,y,theta,alpha,iters):
     J_history = np.zeros((iters,1))
     for i in range(0,iters):
         differences = (X.dot(theta) - y) # difference in value
-        theta_change = (alpha / m) * (X.T(differences))
+        theta_change = (alpha / m) * (X.T.dot(differences))
         theta = theta - theta_change
         J_history[i] = computeCost(X,y,theta)
         print(J_history[i]) #debugging
 
-    return (J_histoy, theta)
+    return (J_history, theta)
 
 
 
@@ -54,7 +54,7 @@ def main() -> int:
     y = y.reshape(m,1) # (n, ) => (n,1) np array, -giving dimension-
     
     # Feature Normalization
-    X, mu, sigma = FeatureNormalization(X)
+    X, mu, sigma = featureNormalization(X)
     X = np.c_[np.ones((m,1)), X] # column extend X, add 1's for theta0
     
     # Gradient Descent
@@ -67,6 +67,11 @@ def main() -> int:
     print(f'Theta computed from gradient descent: {theta}')
     
 
+    # predicting price of 1650 sq-ft 3 bedroom house:
+    price = np.array([(1650-mu[0])/sigma[0],(3-mu[1])/sigma[1]])
+    price = np.insert(price, 0, 1.0) # adding theta0 value: 1
+    price = price.dot(theta)
+    print(f'For a square footage of 1650 and 3 bedrooms, est cost: {price}')
     return 0
 
 
