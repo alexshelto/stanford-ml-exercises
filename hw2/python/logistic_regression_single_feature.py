@@ -2,8 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 '''optimization algo'''
-import scipy.optimize
-
+from scipy import optimize
 
 def plotData(data):
     positives = data[data[:,2] == 1]
@@ -19,6 +18,17 @@ def sigmoid(x):
     '''x can be a vector or single num
     sigmoid = g(x) = 1 / 1+e^x'''
     return  ( (1/ (1+np.exp(-x))) )
+    
+
+
+def computeCost(theta, X, y):
+    '''used for fmin optimization, same as costFunction but only returns cost'''
+    J = 0 # initialize costt
+    print(f'shape of X: {np.shape(X)}, shape of theta: {np.shape(theta)}')
+    m = np.size(y) #
+    h = sigmoid(X @ theta)
+    J = (1 / m) * np.sum(-y * (np.log(h)) - (1 - y) * (np.log(1 - h)))
+    return J
 
 
 def costFunction(theta, X, y):
@@ -29,13 +39,21 @@ def costFunction(theta, X, y):
     gradiant = 1/m * sum (h(x^i) - y) * x^i '''
     J = 0 #cost
     m = np.size(y) # number of training examples
+    h_x = sigmoid(X @ theta)
     gradiant = np.zeros((np.size(y), 1)) #initialized vector 
-    h_x = sigmoid(X @ theta)             # h(x), sigmoid of X*theta
-    J = (-1 / m) * np.sum(y * np.log(h_x) + (1 - y) * np.log(1-h_x))
-    #gradiant = (1/m) * np.sum(np.multiply((h_x - y), X))
+    J = computeCost(theta, X, y)
     gradiant = (X.T @ (h_x - y)) / m
     return J, gradiant
+    
 
+
+def optimizeTheta(theta,X,y):
+    '''MATLABS equiv of fminunc, runs a library optimization algorithm'''
+    print(f'shape of X: {np.shape(X)}\nshape of y: {np.shape(y)}\nshape of theta: {np.shape(theta)}')
+    options = {'maxiter': 450}
+    result = optimize.minimize(computeCost, theta, (X,y), jac=True, method='TNC',options=options)
+    print(f'optimize result object: {result}')
+    return result[0], result[1] #returns theta values
 
 
 def main():
@@ -55,14 +73,25 @@ def main():
     #plotData(data)
     #plt.draw()
     
-    X = np.c_[np.ones((m,1)), X] # add bias (theta 0)
+    X = np.c_[np.ones((m,1)), X] # add bias (theta 0)   X = |1's|feature 1| feature 2|
     theta = np.zeros((np.shape(X)[1], 1)) # theta matrix size of num of features
     # Computing cost and gradient:
     # should result in cost: 0.693, grad = [-0.1, -12.0092, -11.2628]
     
+    print(f'shape of X: {np.shape(X)}\nshape of y: {np.shape(y)}\nshape of theta: {np.shape(theta)}')
+
     cost, gradiant = costFunction(theta, X, y)
     print(f'cost at initial theta: {cost}')
     print(f'Gradiants for inintial theta(zeros): \n{gradiant}') 
+    
+    test_theta = np.array([-24, 0.2, 0.2])
+    test_theta = test_theta.reshape(3, 1) #(3,) => (3,1)
+
+    cost, gradiant = costFunction(test_theta, X, y)
+    print(f'cost at test theta: {cost}')
+    print(f'Gradiants for test theta: \n{gradiant}')
+    #optimizeTheta(theta, X, y)
+    #print(f'Optimized theta values:\n {theta}')
 
     #plt.show() # keeping plotted window open 
     return 0
