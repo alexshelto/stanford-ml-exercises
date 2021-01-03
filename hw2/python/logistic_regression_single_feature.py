@@ -1,4 +1,3 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 '''optimization algo'''
@@ -77,7 +76,6 @@ def sigmoid(x):
     return  ( (1/ (1+np.exp(-x))) )
     
 
-
 def computeCost(theta, X, y):
     '''used for fmin optimization, same as costFunction but only returns cost'''
     J = 0 # initialize costt
@@ -119,7 +117,13 @@ def optimizeTheta(theta,X,y):
     print(f'Cost at theta found by optimize.minimize: {result.fun}')
     return ( result['x'], result.fun )
 
-
+def predict(theta, X):
+    '''predicts whether the label is 0 or 1 based on threshold'''
+    # theta: (3,1). X:(100,3)
+    print(f'inside of predict\ntheta: {theta}')
+    p = np.round(sigmoid(X @ theta))
+    print(p)
+    return p
 
 def main():
     try:
@@ -154,12 +158,18 @@ def main():
     
     # predict prob that a student with a score of 45 on exam1 and 85 on exam 2
     prediction_vector = np.array([ 1, 45, 85])
-    prob = sigmoid(prediction_vector @ theta)
+    prob = sigmoid(prediction_vector @ theta.T)
     print(f'For a student with scores 45 and 85, we predict an admission probability of {prob}')
-    
-    p = prediction(theta, X) #compute accuracy on training set
-    print(f'Train accuracy: {}')
+    p = predict(theta, X) #compute accuracy on training set
 
+    #optimize this
+    yes,no = 0,0
+    for i in range(0, len(p)):
+        if p[i] == y[i]:
+            yes += 1
+        else: 
+            no += 1
+    print(f'Train accuracy: {(yes/len(p))*100}')
 
     plt.show() # keeping plotted window open 
     return 0
