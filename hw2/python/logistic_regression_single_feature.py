@@ -24,7 +24,6 @@ def sigmoid(x):
 def computeCost(theta, X, y):
     '''used for fmin optimization, same as costFunction but only returns cost'''
     J = 0 # initialize costt
-    print(f'shape of X: {np.shape(X)}, shape of theta: {np.shape(theta)}')
     m = np.size(y) #
     h = sigmoid(X @ theta)
     J = (1 / m) * np.sum(-y * (np.log(h)) - (1 - y) * (np.log(1 - h)))
@@ -37,6 +36,7 @@ def costFunction(theta, X, y):
     cost = -(1/m * summation(y^i log(h(x^i)) + (1-y^i)*log(1-h(x^i)))
     h(x) = sigmoid(x*theta) 
     gradiant = 1/m * sum (h(x^i) - y) * x^i '''
+    theta = theta.reshape(np.size(theta),1)
     J = 0 #cost
     m = np.size(y) # number of training examples
     h_x = sigmoid(X @ theta)
@@ -51,9 +51,14 @@ def optimizeTheta(theta,X,y):
     '''MATLABS equiv of fminunc, runs a library optimization algorithm'''
     print(f'shape of X: {np.shape(X)}\nshape of y: {np.shape(y)}\nshape of theta: {np.shape(theta)}')
     options = {'maxiter': 450}
-    result = optimize.minimize(computeCost, theta, (X,y), jac=True, method='TNC',options=options)
-    print(f'optimize result object: {result}')
-    return result[0], result[1] #returns theta values
+    result = optimize.minimize(costFunction,
+                        theta,
+                        (X, y),
+                        jac=True,
+                        method='TNC',
+                        options=options)
+    print(f'Cost at theta foubd by optimize.minimize: {result.fun}')
+    return result['x']
 
 
 def main():
@@ -64,9 +69,9 @@ def main():
         return -1
     
     X = data[:, (0,1)] # first two columns are input data
-    y = data[:, 2]     # output is the last column
+    y = data[:, 2].reshape(-1,1)     # output is the last column
     m = np.size(y)     # number of training examples
-    y = y.reshape(m,1) # giving y a dimension
+    #y = y.reshape(m,1) # giving y a dimension
     
     print(f'Sizes of vectors: X: {np.shape(X)},  y: {np.shape(y)}')
     # Plotting the data:
@@ -74,24 +79,17 @@ def main():
     #plt.draw()
     
     X = np.c_[np.ones((m,1)), X] # add bias (theta 0)   X = |1's|feature 1| feature 2|
-    theta = np.zeros((np.shape(X)[1], 1)) # theta matrix size of num of features
+    n = np.shape(X)[1]           # number of features in X
+    theta = np.zeros((n))        # (features,) dimention vector 
     # Computing cost and gradient:
     # should result in cost: 0.693, grad = [-0.1, -12.0092, -11.2628]
-    
-    print(f'shape of X: {np.shape(X)}\nshape of y: {np.shape(y)}\nshape of theta: {np.shape(theta)}')
-
     cost, gradiant = costFunction(theta, X, y)
     print(f'cost at initial theta: {cost}')
     print(f'Gradiants for inintial theta(zeros): \n{gradiant}') 
     
-    test_theta = np.array([-24, 0.2, 0.2])
-    test_theta = test_theta.reshape(3, 1) #(3,) => (3,1)
 
-    cost, gradiant = costFunction(test_theta, X, y)
-    print(f'cost at test theta: {cost}')
-    print(f'Gradiants for test theta: \n{gradiant}')
-    #optimizeTheta(theta, X, y)
-    #print(f'Optimized theta values:\n {theta}')
+    theta = optimizeTheta(theta, X, y)
+    print(f'Optimized theta values:\n {theta}')
 
     #plt.show() # keeping plotted window open 
     return 0
