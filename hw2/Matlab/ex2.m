@@ -10,22 +10,33 @@ xlabel('Exam 1 score')
 ylabel('Exam 2 score')
 legend('Admitted', 'Not admitted')
 
-% cost function and gradient
-%  Setup the data matrix appropriately
-[m, n] = size(X);
-% Add intercept term to X
-X = [ones(m, 1) X];
-% Initialize the fitting parameters
-initial_theta = zeros(n + 1, 1);
+% Initializing data for cost function and gradient
+[m, n] = size(X);  % m: rows, n: cols 
+X = [ones(m,1) X]; % add column of 1's to X for theta(0)
+initial_theta = zeros(n + 1, 1); % theta matrix. # of rows = cols of X
 
-% Compute and display the initial cost and gradient
+% Checking cost function on known values
 [cost, grad] = costFunction(initial_theta, X, y);
 fprintf('Cost at initial theta (zeros): %f\n', cost);
-fprintf('Gradient at zero theta (zeros): %f\n', grad);
+fprintf('Gradients at initial theta (zeros):\n%f\n%f\n%f\n', grad(1), grad(2), grad(3));
+
+test_theta = [24; -0.2; -0.2];
+[c,g] = costFunction(test_theta, X, y);
+fprintf('Cost at initial theta: %f\n', c);
+fprintf('Gradients at initial theta:\n%f\n%f\n%f\n', g(1), g(2), g(3));
+
+% Opimizing theta with fmin function
+%  Set options for fminunc
+%options = optimoptions(@fminunc,'Algorithm','Quasi-Newton','GradObj', 'on', 'MaxIter', 400);
+options = optimset('GradObj', 'on', 'MaxIter', 400);
+
+%  Run fminunc to obtain the optimal theta
+[theta, cost] = fminunc(@(t)(costFunction(t, X, y)), initial_theta, options)
+
+% Print theta
+fprintf('Cost at theta found by fminunc: %f\n', cost);
+disp('theta:');disp(theta);
 
 
-% Compute and display cost and gradient with non-zero theta
-test_theta = [-24; 0.2; 0.2];
-[cost, grad] = costFunction(test_theta, X, y);
-fprintf('\nCost at non-zero test theta: %f\n', cost);
-disp('Gradient at non-zero theta:'); disp(grad);
+% Plot Boundary
+plotDecisionBoundary(theta, X, y);
