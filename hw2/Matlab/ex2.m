@@ -37,6 +37,14 @@ options = optimset('GradObj', 'on', 'MaxIter', 400);
 fprintf('Cost at theta found by fminunc: %f\n', cost);
 disp('theta:');disp(theta);
 
-
 % Plot Boundary
+hold on;
 plotDecisionBoundary(theta, X, y);
+hold off;
+
+% Predict probability for student with ex1: 45 and ex2: 85 scores
+prob = sigmoid([1 45 85] * theta);
+fprintf('For a student with scores 45 and 85, we predict an admission probability of %f\n\n', prob);
+% Compute accuracy on our training set
+p = predict(theta, X);
+fprintf('Train Accuracy: %f\n', mean(double(p == y)) * 100);

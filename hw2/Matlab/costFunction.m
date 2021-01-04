@@ -1,5 +1,5 @@
 function [J, grad] = costFunction(theta, X, y)
-%COSTFUNCTION Compute cost and gradient for logistic regression
+%COSTFUNgCTION Compute cost and gradient for logistic regression
 %   J = COSTFUNCTION(theta, X, y) computes the cost of using theta as the
 %   parameter for logistic regression and the gradient of the cost
 %   w.r.t. to the parameters.
@@ -20,21 +20,14 @@ grad = zeros(size(theta));
 % Note: grad should have the same dimensions as theta
 %
 
-% cost = -(1/m * summation(y^i log(h(x^i)) + (1-y^i)*log(1-h(x^i)))
-% cost(vectorized) = 1/m*(-y'*log(h(x)) - (1-y)'*log(1-h(x))
-% h(x) = sigmoid(x*theta)
+% J(theta) = (-1/m) * summation(y^i * log(h(x^i)) + (1-y^i) log(1-x(x^i))
+% Gradiant = 1/m * sum(h(x^i) - y^i) * x^i
 
-% h_of_theta = sigmoid(X * theta);
-% J = (-1/m) * sum(y*log(h_of_theta) + (1-y)*log(1-h_of_theta));
-% 
-
-h_of_theta = sigmoid(X * theta);
-J = 1/m * sum(-y .* log(h_of_theta) - (1 - y) .* log(1 - h_of_theta));
-
-% calculate gradiants
-% gradient = 1/m * sum(htheta(x) - y)
-grad = (X'*(h_of_theta - y))/m;
+h_x = sigmoid(X*theta);
+J = (1/m) * (-y' * log(h_x) - (1 - y)' * log(1 - h_x));
+grad = (1/m) * sum((h_x - y) .* X)
 
 % =============================================================
 
 end
+
