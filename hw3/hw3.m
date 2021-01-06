@@ -19,4 +19,4 @@ lambda_t = 3;
 
 fprintf('Cost: %f | Expected cost: 2.534819\n',J);
 fprintf('Gradients:\n'); fprintf('%f\n',grad);
-fprintf('Expected gradients:\n 0.146561\n -0.548558\n 0.724722\n 1.398003');
+fprintf('Expected gradients:\n 0.146561\n -0.548558\n 0.724722\n 1.398003\n');
