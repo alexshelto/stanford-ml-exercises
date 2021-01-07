@@ -14,3 +14,14 @@ load('ex3weights.mat');
 % Predict using defined theta weights and check accuracy
 pred = predict(Theta1, Theta2, X);
 fprintf('\nTraining Set Accuracy: %f\n', mean(double(pred == y)) * 100);
+
+
+% Shows a random value from the training set and gives prediction and actual result
+
+%  Randomly permute examples
+rp = randi(m);
+% Predict
+pred = predict(Theta1, Theta2, X(rp,:));
+fprintf('\nNeural Network Prediction: %d (digit %d)\n', pred, mod(pred, 10));
+% Display
+displayData(X(rp, :));
