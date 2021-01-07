@@ -33,10 +33,9 @@ X = [ones(m,1) X];
 % size(Theta1) 25 x 401
 % size(Theta2) 10 x 26
 % size(a_2) 5000 x 25
-
 % calculating hidden layer 
 a_2 = sigmoid(X * Theta1'); % X * Theta1' == z^2
-a_2 = [ones(5000,1), a_2]; % adding a bias term or a row of 0's
+a_2 = [ones(m,1), a_2]; % adding a bias term or a row of 0's
 
 % calculating output layer
 % z_3 = a_2 * Theta2'; % 5000x26 * 26x10 == (5000x10)
